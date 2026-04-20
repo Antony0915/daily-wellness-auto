@@ -1,0 +1,31 @@
+name: 每日内容推送
+
+on:
+  schedule:
+    # 北京时间每天 07:15 = UTC 23:15 (前一天)
+    - cron: '15 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily-wellness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: pip install requests --no-cache-dir
+
+      - name: 发送中年觉醒内容
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        run: python scripts/send_middle_age.py
+
+      - name: 发送心理健康内容
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        run: python scripts/send_mental_health.py
